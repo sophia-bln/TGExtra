@@ -31,13 +31,17 @@ jobs:
 
       - name: Build package
         run: |
-          rm -f packages/*
+          mkdir -p packages
+          rm -f packages/*.deb
           make package FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
           make package THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
           make package THEOS_PACKAGE_SCHEME=roothide FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
+
+      - name: Show generated debs
+        run: ls -lh packages/
 
       - name: Upload specific Deb packages
         uses: actions/upload-artifact@v4.6.0
         with:
           name: DYYY
-          path: ${{ github.workspace }}/packages/*.deb
+          path: packages/*.deb
