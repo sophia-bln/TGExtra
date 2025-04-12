@@ -1,5 +1,4 @@
-
-# 插件：显示编译成功，显示的信息
+# 插件：显示编译成功，显示的信息 
 PACKAGE_IDENTIFIER = com.pxx917144686.x
 PACKAGE_NAME = x
 PACKAGE_VERSION = 0.0.1
@@ -11,18 +10,18 @@ PACKAGE_DESCRIPTION = x
 
 # 插件：编译时，引用的信息
 define Package/x
-  Package: com.pxx917144686.x
-  Name: x
-  Version: 0.0.1
-  Architecture: iphoneos-arm64 iphoneos-arm64e
+  Package: $(PACKAGE_IDENTIFIER)
+  Name: $(PACKAGE_NAME)
+  Version: $(PACKAGE_VERSION)
+  Architecture: $(PACKAGE_ARCHITECTURE)
   Author: pxx917144686
-  Section: Tweaks
-  Depends: firmware (>= 14.0), mobilesubstrate
-  Description: x
+  Section: $(PACKAGE_SECTION)
+  Depends: $(PACKAGE_DEPENDS)
+  Description: $(PACKAGE_DESCRIPTION)
 endef
 
-# 直接输出到根路径
-export THEOS_PACKAGE_DIR = $(CURDIR)
+# 输出目录为 packages 文件夹
+export THEOS_PACKAGE_DIR = $(CURDIR)/packages
 
 # TARGET
 ARCHS = arm64 arm64e
@@ -44,9 +43,9 @@ TWEAK_NAME = x
 # 源代码文件
 x_FILES = x.x
 
-# Theos 编译规则
-include $(THEOS_MAKE_PATH)/tweak.mk
-
 # 框架
 x_FRAMEWORKS = UIKit Foundation UserNotifications
 x_CFLAGS = -fobjc-arc
+
+# 编译规则
+include $(THEOS_MAKE_PATH)/tweak.mk
