@@ -29,12 +29,6 @@ jobs:
         run: |
           echo "$(brew --prefix)/opt/make/libexec/gnubin" >> $GITHUB_PATH
 
-      - name: Prepare TGExtra.bundle
-        run: |
-          echo ">>> Creating TGExtra.bundle from Sources/tgapi/Resources"
-          cp -a Sources/tgapi/Resources TGExtra.bundle
-          ls -al TGExtra.bundle || echo "Bundle not created!"
-
       - name: Build package
         run: |
           mkdir -p packages
