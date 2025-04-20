@@ -1,48 +1,54 @@
 name: build deb
 
-on: [push]
+on:
+  push:
+    paths:
+      - '.github/workflows/build.yml'  # 监控 build.yml 文件的变化
+      - 'control' 
+    branches:
+      - 'main'  # 仅在推送到 main 分支时触发
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4.2.2
         with:
           submodules: true
 
-      - name: Check cache key
+      - name: Check cache
         run: |
-          echo upstream_heads=$(git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1)-$(git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1) >> $GITHUB_ENV
+          echo upstream_heads=`git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
 
       - name: Use cache
         id: cache
         uses: actions/cache@v4.2.1
         with:
           path: ${{ github.workspace }}/theos
-          key: theos-${{ runner.os }}-${{ env.upstream_heads }}
+          key: ${{ runner.os }}-${{ env.upstream_heads }}
 
       - name: Prepare Theos
-        uses: huami1314/theos-action@main
+        uses: axs66/theos-action@main
 
-      - name: Setup GNU Make
-        run: echo "$(brew --prefix make)/libexec/gnubin" >> $GITHUB_PATH
-
-      - name: Build rootless (arm64)
+      - name: Setup Dependencies
         run: |
-          make clean
-          make package THEOS_PACKAGE_SCHEME=rootless ARCHS=arm64 FINALPACKAGE=1 VERBOSE=1 -j$(sysctl -n hw.ncpu)
+          sudo apt-get update
+          sudo apt-get install -y make clang libtool libicu-dev
 
-      - name: Build roothide (arm64e)
+      - name: Build package
         run: |
-          make clean
-          make package THEOS_PACKAGE_SCHEME=roothide ARCHS=arm64e FINALPACKAGE=1 VERBOSE=1 -j$(sysctl -n hw.ncpu)
+          mkdir -p packages
+          rm -f packages/*.deb
+          make package FINALPACKAGE=1 -j$(nproc)
+          make package THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 -j$(nproc)
+          make package THEOS_PACKAGE_SCHEME=roothide FINALPACKAGE=1 -j$(nproc)
 
-      - name: List generated debs
+      - name: Show generated debs
         run: ls -lh packages/
 
-      - name: Upload artifacts
+      - name: Upload specific Deb packages
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: TGExtra-all-debs
+          name: TGExtra
           path: packages/*.deb
