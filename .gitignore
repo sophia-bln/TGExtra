@@ -1,3 +1,8 @@
-.theos
-packages
 .DS_Store
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+
+.theos
+/packages
