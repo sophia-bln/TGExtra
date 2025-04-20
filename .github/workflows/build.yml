@@ -13,7 +13,7 @@ jobs:
 
       - name: Check cache
         run: |
-          echo upstream_heads=`git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
+          echo upstream_heads=git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1-git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1 >> $GITHUB_ENV
 
       - name: Use cache
         id: cache
@@ -29,6 +29,12 @@ jobs:
         run: |
           echo "$(brew --prefix)/opt/make/libexec/gnubin" >> $GITHUB_PATH
 
+      - name: Prepare TGExtra.bundle
+        run: |
+          echo ">>> Creating TGExtra.bundle from Sources/tgapi/Resources"
+          cp -a Sources/tgapi/Resources TGExtra.bundle
+          ls -al TGExtra.bundle || echo "Bundle not created!"
+
       - name: Build package
         run: |
           mkdir -p packages
@@ -43,5 +49,5 @@ jobs:
       - name: Upload specific Deb packages
         uses: actions/upload-artifact@v4.6.0
         with:
-          name: DYYY
+          name: TGExtra
           path: packages/*.deb
