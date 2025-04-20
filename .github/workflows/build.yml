@@ -34,7 +34,7 @@ jobs:
       - name: Setup Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y make clang libtool libicu-dev libtinfo-dev
+          sudo apt-get install -y make clang libtool libicu-dev libncurses-dev libz3-dev rsync curl perl unzip git libplist-utils
 
       - name: Build package
         run: |
