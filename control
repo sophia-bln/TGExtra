@@ -1,8 +1,15 @@
-Package: com.choco.tg
-Name: TGExtra
+Package: com.axs.tgextra
+Name: Telegram增强
 Version: 1.2
 Architecture: iphoneos-arm
-Description: An simple Tweak For Telegram iOS
-Maintainer: choco
+Description: Telegram 增强插件
+  * 去除广告
+  * 隐藏一些输入状态
+  * 允许保存频道限制下载的文件
+  * 点击左上角编辑，然后三指长按打开插件
+  * 支持 Telegram、Turrit 等第三方客户端
+Maintainer: Axs
 Author: choco
 Section: Tweaks
+Icon: https://axs66.github.io/repo/icon/Telegram.png
+Sileodepiction: https://axs66.github.io/repo/sileodepiction/tgextras/js.json
