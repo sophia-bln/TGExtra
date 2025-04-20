@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4.2.2
@@ -19,7 +19,7 @@ jobs:
 
       - name: Check cache
         run: |
-          echo upstream_heads=`git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
+          echo upstream_heads=git ls-remote https://github.com/roothide/theos | head -n 1 | cut -f 1-git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1 >> $GITHUB_ENV
 
       - name: Use cache
         id: cache
@@ -31,18 +31,17 @@ jobs:
       - name: Prepare Theos
         uses: axs66/theos-action@main
 
-      - name: Setup Dependencies
+      - name: Setup GNU Make
         run: |
-          sudo apt-get update
-          sudo apt-get install -y make clang libtool libicu-dev libncurses-dev libz3-dev rsync curl perl unzip git libplist-utils
+          echo "$(brew --prefix)/opt/make/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Build package
         run: |
           mkdir -p packages
           rm -f packages/*.deb
-          make package FINALPACKAGE=1 -j$(nproc)
-          make package THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 -j$(nproc)
-          make package THEOS_PACKAGE_SCHEME=roothide FINALPACKAGE=1 -j$(nproc)
+          make package FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
+          make package THEOS_PACKAGE_SCHEME=rootless FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
+          make package THEOS_PACKAGE_SCHEME=roothide FINALPACKAGE=1 -j$(sysctl -n hw.ncpu)
 
       - name: Show generated debs
         run: ls -lh packages/
