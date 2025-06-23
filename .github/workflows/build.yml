@@ -3,10 +3,10 @@ name: build deb
 on:
   push:
     paths:
-      - '.github/workflows/build.yml'  # 监控 build.yml 文件的变化
+      - '.github/workflows/build.yml'  # build.yaml
       - 'control' 
     branches:
-      - 'main'  # 仅在推送到 main 分支时触发
+      - 'main'  # main
 
 jobs:
   build:
